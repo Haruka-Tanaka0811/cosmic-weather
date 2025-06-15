@@ -4,7 +4,7 @@ import requests
 st.title("宇宙天気ミニダッシュボード")
 st.write("NASAのAPIから、リアルタイムで宇宙天気情報を取得しています✨")
 
-API_KEY = st.secrets["NASA_API_KEY"]
+API_KEY = st.secrets["api"]["key"]
 URL = f"https://api.nasa.gov/DONKI/FLR?startDate=2024-06-01&api_key={API_KEY}"
 
 response = requests.get(URL)
