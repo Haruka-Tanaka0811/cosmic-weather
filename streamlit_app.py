@@ -9,6 +9,21 @@ st.caption("NASAのAPIから、リアルタイムで宇宙天気情報を取得�
 API_KEY = st.secrets["api"]["key"]
 URL = f"https://api.nasa.gov/DONKI/FLR?startDate=2024-06-01&api_key={API_KEY}"
 
+# クラスに応じた色を返す関数
+def get_class_color(class_type):
+    if not class_type:
+        return "gray"
+    if class_type.startswith("X"):
+        return "red"
+    elif class_type.startswith("M"):
+        return "orange"
+    elif class_type.startswith("C"):
+        return "gold"
+    elif class_type.startswith("B"):
+        return "green"
+    else:
+        return "gray"
+
 response = requests.get(URL)
 
 if response.status_code == 200:
@@ -17,10 +32,13 @@ if response.status_code == 200:
         st.subheader("🛰️ 最新の太陽フレア情報（上位3件）")
 
         for i, flare in enumerate(data[:3], 1):
+            class_type = flare.get("classType", "不明")
+            color = get_class_color(class_type)
+
             with st.container():
                 st.markdown(f"### 🌟 太陽フレア {i}")
                 st.write(f"**開始時刻**: `{flare['beginTime']}`")
-                st.write(f"**クラス**: `{flare.get('classType', '不明')}`")
+                st.markdown(f"**クラス**: <span style='color:{color}'><strong>{class_type}</strong></span>", unsafe_allow_html=True)
                 st.write(f"**発生場所**: `{flare.get('sourceLocation', '不明')}`")
                 st.markdown("---")
     else:
