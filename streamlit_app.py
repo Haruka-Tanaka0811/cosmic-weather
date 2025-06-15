@@ -1,11 +1,11 @@
 import streamlit as st
 import requests
 
-st.title("宇宙天気ミニダッシュボード")
-st.write("NASAのAPIから、リアルタイムで宇宙天気情報を取得しています✨")
-
-API_KEY = "Z4lRtyMc91Hjew51Emf82OPCpNDkpdxJoHpJBLc5"  # ← ここに自分のキーを貼り付ける！
+# 宇宙天気API（仮）→ はるかさんのAPI使ってね
+API_KEY = "Z4lRtyMc91Hjew51Emf82OPCpNDkpdxJoHpJBLc5"
 URL = f"https://api.nasa.gov/DONKI/KP?api_key={API_KEY}"
+
+st.title("宇宙天気ミニダッシュボード")
 
 try:
     response = requests.get(URL)
