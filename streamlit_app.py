@@ -24,6 +24,16 @@ def get_class_color(class_type):
     else:
         return "gray"
 
+# 🌈 凡例を表示
+st.markdown("### 🌈 フレアクラスの色分け（強さの目安）")
+st.markdown("""
+- <span style='color:red'>🔴 **Xクラス**</span>：非常に強い
+- <span style='color:orange'>🟠 **Mクラス**</span>：中程度
+- <span style='color:gold'>🟡 **Cクラス**</span>：弱め
+- <span style='color:green'>🟢 **Bクラス以下**</span>：微弱または通常レベル
+""", unsafe_allow_html=True)
+
+# データ取得と表示
 response = requests.get(URL)
 
 if response.status_code == 200:
