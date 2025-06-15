@@ -52,6 +52,12 @@ if response.status_code == 200:
             # グラフ用にクラスの頭文字を保存（例: "X1.2" → "X"）
             if class_type not in ["不明", None]:
                 flare_records.append(class_type[0])
+    
+　　　　　　　　# 日時の整形
+            begin_time_raw = flare['beginTime']
+            dt_utc = datetime.strptime(begin_time_raw, "%Y-%m-%dT%H:%MZ")
+            dt_jst = dt_utc + timedelta(hours=9)
+            formatted_time = dt_jst.strftime("%Y年%m月%d日 %H:%M（日本時間）")
 
             with st.container():
                 st.markdown(f"### 🌟 太陽フレア {i}")
