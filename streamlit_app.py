@@ -2,32 +2,22 @@ import streamlit as st
 import requests
 
 st.title("宇宙天気ミニダッシュボード")
+st.write("NASAのAPIから、リアルタイムで宇宙天気情報を取得しています✨")
 
-URL = "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json"
+API_KEY = "Z4lRtyMc91Hjew51Emf82OPCpNDkpdxJoHpJBLc5"  # ← ここに自分のキーを貼り付ける！
+URL = f"https://api.nasa.gov/DONKI/FLR?startDate=2024-06-01&api_key={API_KEY}"
 
-try:
-    response = requests.get(URL)
+response = requests.get(URL)
+if response.status_code == 200:
     data = response.json()
-
-    # 最新のデータ（最後の要素）を取得
-    latest = data[-1]
-    kp_index = float(latest["k_index"])
-    time = latest["time_tag"]
-
-    # 色分けロジック
-    if kp_index < 4:
-        color = "🟢"
-        status = "安定"
-    elif kp_index < 6:
-        color = "🟡"
-        status = "やや不安定"
+    if data:
+        st.subheader("最新の太陽フレア情報")
+        for flare in data[:3]:  # 最新3件だけ表示
+            st.markdown(f"- **開始時刻**: {flare['beginTime']}")
+            st.markdown(f"  - クラス: {flare.get('classType', '不明')}")
+            st.markdown(f"  - 発生場所: {flare.get('sourceLocation', '不明')}")
+            st.markdown("---")
     else:
-        color = "🔴"
-        status = "嵐レベル"
-
-    st.subheader(f"{color} 現在のK指数： {kp_index}")
-    st.write(f"宇宙天気状況： **{status}**")
-    st.caption(f"最終更新時刻：{time}")
-
-except Exception as e:
-    st.error("宇宙天気の取得に失敗しました😢")
+        st.write("現在、太陽フレアの報告はありません。")
+else:
+    st.error("宇宙天気のデータ取得に失敗しました。")
