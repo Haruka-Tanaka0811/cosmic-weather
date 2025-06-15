@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
 
 st.set_page_config(page_title="宇宙天気ミニダッシュボード", page_icon="☀️")
 
@@ -26,6 +27,12 @@ def get_class_color(class_type):
     else:
         return "gray"
 
+# UTC → 日本時間への変換
+def convert_to_jst(utc_time_str):
+    dt_utc = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%MZ")
+    dt_jst = dt_utc + timedelta(hours=9)
+    return dt_jst.strftime("%Y年%m月%d日 %H:%M（日本時間）")
+
 # 🌈 凡例を表示
 st.markdown("### 🌈 フレアクラスの色分け（強さの目安）")
 st.markdown("""
@@ -49,19 +56,17 @@ if response.status_code == 200:
             class_type = flare.get("classType", "不明")
             color = get_class_color(class_type)
 
+            # JSTに変換した開始時刻を表示
+            raw_time = flare.get("beginTime", "")
+            formatted_time = convert_to_jst(raw_time) if raw_time else "不明"
+
             # グラフ用にクラスの頭文字を保存（例: "X1.2" → "X"）
             if class_type not in ["不明", None]:
                 flare_records.append(class_type[0])
-    
-　　　　　　　　# 日時の整形
-            begin_time_raw = flare['beginTime']
-            dt_utc = datetime.strptime(begin_time_raw, "%Y-%m-%dT%H:%MZ")
-            dt_jst = dt_utc + timedelta(hours=9)
-            formatted_time = dt_jst.strftime("%Y年%m月%d日 %H:%M（日本時間）")
 
             with st.container():
                 st.markdown(f"### 🌟 太陽フレア {i}")
-                st.write(f"**開始時刻**: `{flare['beginTime']}`")
+                st.write(f"**開始時刻**: `{formatted_time}`")
                 st.markdown(f"**クラス**: <span style='color:{color}'><strong>{class_type}</strong></span>", unsafe_allow_html=True)
                 st.write(f"**発生場所**: `{flare.get('sourceLocation', '不明')}`")
                 st.markdown("---")
